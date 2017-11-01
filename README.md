@@ -3,11 +3,11 @@
 
 ```bash
 # clone the repo
-git clone https://github.com/ngrx/example-app.git
+git clone https://github.com/desaipiyush68/Angular-firbase-redux.git
 
 
 # change directory to repo
-cd example-app
+cd Angular-firbase-redux
 
 # Use npm or yarn to install the dependencies:
 npm install

@@ -1,0 +1,80 @@
+<div class="page-users" [@routerTransition]>
+    <div class="row">
+        <div class="col col-xl-6 col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <label>Users</label>   
+                    <i  class="fa fa-plus-circle createUser" (click)="createUserModel(content)"></i>
+                </div>
+                <div class="card-block table-responsive">
+                    <table class="table" >
+                      <thead >
+                            <tr >
+                                <th>UserId</th>
+                                <th>Login</th>
+                                <th>UserRole</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let user of Users">
+                                <td>{{ user.$key }}</td>
+                                <td>{{ user.login }}</td>
+                                <td>{{ user.role.roleName}}</td>
+                                <td><i class="fa fa-pencil-square-o updateUser" (click)='updateUserModel(user,content)' aria-hidden="true"></i></td>
+                                <td><i class="fa fa-trash-o deleteUser" (click)='deleteUserModel(user,deletecontent)' aria-hidden="true"></i></td>
+                            </tr> 
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <ng-template #content let-c="close" let-d="dismiss">
+            <div class="modal-header">
+                <h4 class="modal-title" *ngIf="crUser">CreateUser</h4>
+                <h4 class="modal-title" *ngIf="upUser">UpdateUser</h4>
+                <button type="button" class="close" aria-label="Close" (click)="d('Cross click')"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form role="form"   autocomplete="off" novalidate class="login-form" [formGroup]="form">
+                    <div class="form-content">
+                        <div class="form-group">
+                            <input class="form-control input-underline input-lg" name="login" formControlName="login" placeholder="Login" >
+                        </div>
+                        <div class="form-group">
+                            <select [(ngModel)]="selectedRole" name="role" formControlName="role" style="width: 100%; border-radius: 5px; height: 38px;     color: gray; border-color: lightgray;" >
+                                 <option *ngFor="let role of Roles; let i = index"  [ngValue]="role">{{ role.roleName }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" *ngIf="crUser" class="btn btn-outline-dark" (click)="createUser()" [disabled]="!isNotempty()" (click)="d('Cross click')">CreateUser</button>
+                <button type="button" *ngIf="upUser" class="btn btn-outline-dark" (click)="updateUser()" [disabled]="!isNotempty()" (click)="d('Cross click')">updateUser</button>
+            </div>
+        </ng-template>
+        <ng-template #deletecontent let-c="close" let-d="dismiss">
+            <div class="modal-header">
+                <h4 class="modal-title" >DeleteUser</h4>
+                <button type="button" class="close" aria-label="Close" (click)="d('Cross click')"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">      
+                <div class="row" >
+                    <span>Are you sure ?</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row" >
+
+                           <button type="button" class="btn btn-default" style="margin-right:10px;" (click)="d('Cross click')">Cancel</button>
+                           <button type="button" class="btn btn-danger" (click)="deleteUser()" (click)="d('Cross click')">Delete</button>
+
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</div>

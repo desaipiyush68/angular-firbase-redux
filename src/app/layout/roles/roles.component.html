@@ -1,0 +1,73 @@
+<div class="page-roles" [@routerTransition]>
+    <div class="row">
+        <div class="col col-xl-6 col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <label>Roles</label>
+                    <i  class="fa fa-plus-circle createRole" (click)="createRoleModel(content)"></i>
+                </div>
+                <div class="card-block table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>RoleId</th>
+                                <th>RoleName</th>
+                                <th>Update</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let role of Roles">
+                                <td>{{ role.$key }}</td>
+                                <td>{{ role.roleName}}</td>
+                                <td><i class="fa fa-pencil-square-o updateRole" (click)='updateRoleModel(role,content)'></i></td>
+                                <td><i class="fa fa-trash-o deleteRole" (click)='deleteRoleModel(role,deletecontent)'></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <ng-template #content let-c="close" let-d="dismiss">
+            <div class="modal-header">
+                <h4 class="modal-title" *ngIf="crRole">CreateRole</h4>
+                <h4 class="modal-title" *ngIf="upRole">UpdateRole</h4>
+                <button type="button" class="close" aria-label="Close" (click)="d('Cross click')"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form role="form" autocomplete="off" novalidate class="login-form" [formGroup]="form">
+                    <div class="form-content">
+                        <div class="form-group">
+                            <input class="form-control input-underline input-lg" name="roleName" formControlName="roleName" placeholder="RoleName">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" *ngIf="crRole" class="btn btn-outline-dark" (click)="createRole()" [disabled]="!isNotempty()" (click)="d('Cross click')">CreateRole</button>
+                <button type="button" *ngIf="upRole" class="btn btn-outline-dark" (click)="updateRole()" [disabled]="!isNotempty()" (click)="d('Cross click')">UpdateRole</button>
+            </div>
+        </ng-template>
+        <ng-template #deletecontent let-c="close" let-d="dismiss">
+            <div class="modal-header">
+                <h4 class="modal-title" >DeleteRole</h4>
+                <button type="button" class="close" aria-label="Close" (click)="d('Cross click')"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">      
+                <div class="row" >
+                    <span>Are you sure ?</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row" >
+
+                           <button type="button" class="btn btn-default" style="margin-right:10px;" (click)="d('Cross click')">Cancel</button>
+                           <button type="button" class="btn btn-danger" (click)="deleteRole()" (click)="d('Cross click')">Delete</button>
+
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</div>

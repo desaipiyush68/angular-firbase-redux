@@ -1,4 +1,4 @@
-#Angular-firbase-redux
+# Angular-firbase-redux
 ### Quick start
 
 ```bash

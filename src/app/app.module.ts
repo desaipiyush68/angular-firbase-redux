@@ -23,7 +23,7 @@ import { EffectsModule }             from '@ngrx/effects';
 import { StoreModule }               from '@ngrx/store';
 import { StoreDevtoolsModule }       from '@ngrx/store-devtools';
 
-//reduces and Actions
+//reduces and Effects
 import { UserEffects }  from './shared/effects/users.effects';
 import { RoleEffects }  from './shared/effects/roles.effects';
 import { userReducer }  from './shared/reducers/users.reducers';

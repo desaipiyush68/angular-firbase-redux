@@ -15,41 +15,37 @@ import { UserService } from '../services/model/users.service';
 @Injectable()
 
 export class UserEffects {
-  constructor(private actions: Actions,
-    private db: AngularFireDatabase,
-    private userService: UserService) { }
-
-
-
-  @Effect()
-  getUserList = this.actions.ofType(userActions.GET_USER_LIST)
-    .map((action: userActions.GetUserList) => action.payload)
-    .switchMap(payload => this.userService.getUsersList())
+  constructor(private actions: Actions, 
+              private db: AngularFireDatabase,
+              private userService:UserService) {}
+  
+  @Effect() 
+  getUserList: Observable<Action> = this.actions.ofType(userActions.GET_USER_LIST)
+    .map((action: userActions.GetUserList) => action.payload )
+    .mergeMap(payload => this.db.list('/users'))
     .map(user => {
-      return new userActions.GetUserSuccess(user);
+     return new userActions.GetUserSuccess(user);
     });
-
-
-
+  
   @Effect()
-  updateUser = this.actions.ofType(userActions.GET_USER_LIST)
-    .map((action: userActions.GetUserList) => action.payload)
-    .switchMap(payload => this.userService.updateUser(payload.$key, payload))
+  updateUser: Observable<Action> = this.actions.ofType(userActions.UPDATE_USER)
+    .map((action: userActions.UpdateUser) => action.payload )
+    .mergeMap(payload => of(this.db.list('/users')
+                         .update(payload.$key,payload)))
     .map(() => new userActions.UpdateUserSuccess());
-
-
 
   @Effect()
   createUser: Observable<Action> = this.actions.ofType(userActions.CREAT_USER)
-    .map((action: userActions.CreateUser) => action.payload)
-    .switchMap(payload => this.userService.createUser(payload))
+    .map((action: userActions.CreateUser) => action.payload )
+    .mergeMap(payload => of(this.db.list('/users')
+                         .push(payload)))
     .map(() => new userActions.CreateUserSuccess());
-
-
-
+    
   @Effect()
   deleteUser: Observable<Action> = this.actions.ofType(userActions.DELETE_USER)
-    .map((action: userActions.DeleteUser) => action.payload)
-    .switchMap(payload => this.userService.deleteUser(payload.$key))
-    .map(() => new userActions.DeleteUserSuccess());
+    .map((action: userActions.DeleteUser) => action.payload )
+    .mergeMap(payload => of(this.db.list('/users')
+                         .remove(payload.$key)))
+    .map(() => new userActions.DeleteUserSuccess()); 
+
 }

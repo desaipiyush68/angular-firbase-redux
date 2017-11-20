@@ -10,8 +10,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthGuard } from './shared';
 import { AuthService } from './shared/services/auth.service';
-import { UserService } from './shared/services/model/users.service';
-import { RoleService } from './shared/services/model/roles.service';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -64,7 +62,7 @@ export function HttpLoaderFactory(http: Http) {
         EffectsModule.forRoot([UserEffects,RoleEffects]),
         
     ],
-    providers: [AuthService,AuthGuard,UserService,RoleService],
+    providers: [AuthService,AuthGuard],
     bootstrap: [AppComponent]
 })
 export class AppModule {

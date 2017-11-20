@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Role } from '../../shared/services/model/roles';
-import { RoleService } from '../../shared/services/model/roles.service';
 import { FirebaseListObservable } from 'angularfire2/database';
 import { routerTransition } from '../../router.animations';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs/Observable';
+
+//ngrx
+import * as roleActions from '../../shared/actions/roles.actions';
+//store
+import { Store }        from '@ngrx/store'; 
+import { AppState } from '../../shared/store/store';
 
 @Component({
     selector: 'app-roles-page',
@@ -21,21 +27,21 @@ export class RolesPageComponent implements OnInit {
     role: Role = new Role();
     crRole:boolean;
     upRole:boolean;
-    
+    role$:Observable<any>;
     constructor(
-        private rolesService: RoleService,
         private modalService: NgbModal,
-        private fb: FormBuilder) {
-
+        private fb: FormBuilder,
+        private store: Store<AppState>) {
+        this.role$ = this.store.select('role'); 
     }
 
     ngOnInit() {
 
-        let roles  = this.rolesService.getRolesList();
-        roles.subscribe(role => {
-            this.Roles = role;
-        });
-
+        this.store.dispatch(new roleActions.GetRoleList())
+        this.role$.subscribe(data =>{
+           this.Roles = data.role;        
+        })
+        
         this.crRole = true;
         this.upRole = false;
     }
@@ -46,7 +52,7 @@ export class RolesPageComponent implements OnInit {
         let date = new Date().getTime();
         this.role.roleName = val.roleName;
         this.role.timeStamp = date;
-        this.rolesService.createRole(this.role);
+        this.store.dispatch(new roleActions.CreateRole(this.role))
         this.role = new Role();
     }
    
@@ -70,7 +76,7 @@ export class RolesPageComponent implements OnInit {
         let date = new Date().getTime();
         this.role.roleName = val.roleName;
         this.role.timeStamp = date;
-        this.rolesService.updateRole(this.role.$key, this.role);
+        this.store.dispatch(new roleActions.UpdateRole(this.role))
         this.role = new Role();
 
     }
@@ -115,12 +121,10 @@ export class RolesPageComponent implements OnInit {
     
     deleteRole() {
         
-        this.rolesService.deleteRole(this.role.$key);
+        this.store.dispatch(new roleActions.DeleteRole(this.role))
     }
 
-    deleteRoles() {
-        this.rolesService.deleteAll();
-    }
+
 
     isNotempty() {
         const val = this.form.value;

@@ -1,15 +1,17 @@
 import * as UserActions from '../actions/users.actions';
 import { User } from '../services/model/users';
 export type Action = UserActions.All;
-
-
+let user:User;
+const initialState = {
+   user : []
+}
 /// Reducer function
-export function userReducer(state = User, action: Action) {
+export function userReducer(state = initialState, action: Action) {
   switch (action.type) {
     case UserActions.GET_USER_LIST:
       return { ...state, loading: true };
     case UserActions.GET_USER_LIST_SUCCESS:
-       return { ...state, ...action.payload, loading: false };
+       return { ...state, user:action.payload, loading: false };
     case UserActions.CREAT_USER:
       return { ...state, ...action.payload, loading: true };
     case UserActions.CREAT_USER_SUCCESS:

@@ -1,21 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Pipe,PipeTransform } from '@angular/core';
 import { routerTransition } from '../../router.animations';
 import { Observable } from 'rxjs/Observable';
-
 //firebase 
 import * as firebase from 'firebase/app';
 import { FirebaseListObservable } from 'angularfire2/database';
-
-//User Service
-import { UserService } from '../../shared/services/model/users.service';
-import { RoleService } from '../../shared/services/model/roles.service';
+//Data Model
 import { User } from '../../shared/services/model/users';
 import { Role } from '../../shared/services/model/roles';
+
 
 //Model
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-
+//ngrx
+import * as userActions from '../../shared/actions/users.actions';
+import * as roleActions from '../../shared/actions/roles.actions';
+//store 
+import { Store }        from '@ngrx/store';
+import { AppState } from '../../shared/store/store';
 
 
 @Component({
@@ -31,55 +33,56 @@ export class UsersComponent implements OnInit {
     Roles:Role[];
     form: FormGroup;
     closeResult: string;
-    user:User = new User();
     role:Role ;
     selectedRole:Role;
     crUser:boolean;
     upUser:boolean;
     login:any;
-    user$: Observable<User[]>;
-    constructor(private userService: UserService,
-                private roleService: RoleService,
+    user$: Observable<any>;
+    role$:Observable<any>;
+    usr:User;
+    constructor(
                 private modalService: NgbModal,
-                private fb: FormBuilder
+                private fb: FormBuilder,
+                private store: Store<AppState>
                ) {   
+             this.user$ = this.store.select('user'); 
+             this.role$ = this.store.select('role');  
+               
     }
 
     ngOnInit() {
 
-        let users = this.userService.getUsersList();
-        users.subscribe(user=>{
-            this.Users = user;
-        });
-       
-      
-        let roles =  this.roleService.getRolesList();
-        
-        roles.subscribe(role=>{
-            this.Roles = role;
-            let selectedrole = this.Roles[0];
-            this.selectedRole = selectedrole;
-        });
-        
+        this.store.dispatch(new userActions.GetUserList())
+        this.user$.subscribe(data =>{
+           this.Users = data.user;        
+        })
+
+        this.store.dispatch(new roleActions.GetRoleList())
+        this.role$.subscribe(data =>{
+           this.Roles = data.role;
+           let selectedrole = this.Roles[0];
+           this.selectedRole = selectedrole;        
+        })
+
         this.crUser = true;
         this.upUser = false;
         
-      
-    }
+     }
     
-    createUser() {
+     createUser() {
 
         const val = this.form.value;
         let date = new Date().getTime();
-        this.user.login = val.login;
-        this.user.role = val.role;
-        this.user.timeStamp = date;
-        this.userService.createUser(this.user);
-        this.user = new User();
+        this.usr.login = val.login;
+        this.usr.role = val.role;
+        this.usr.timeStamp = date;
+        this.store.dispatch(new userActions.CreateUser(this.usr))
+        this.usr = new User();
         
-    }
+     }
 
-    createUserModel(content) {
+     createUserModel(content) {
 
         //Initaite form
         this.form = this.fb.group({
@@ -96,7 +99,7 @@ export class UsersComponent implements OnInit {
         }, (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
         });
-    }
+     }
 
   
   
@@ -104,19 +107,18 @@ export class UsersComponent implements OnInit {
 
 
 
-    updateUserModel(user:User,content){
+    updateUserModel(upUsr:User,content){
 
         this.crUser = false;
         this.upUser = true;
-    
         this.form = this.fb.group({
-            login: [user.login, Validators.required],
-            role:[user.role, Validators.required]
+            login: [upUsr.login, Validators.required],
+            role:[upUsr.role, Validators.required]
         });
         
-        let role =  this.Roles.find(x => x.roleName == user.role.roleName);
+        let role =  this.Roles.find(x => x.roleName == upUsr.role.roleName);
         this.selectedRole = role;
-        this.user = user;
+        this.usr = upUsr;
         
         this.modalService.open(content).result.then((result) => {
             this.closeResult = `Closed with: ${result}`;
@@ -131,20 +133,20 @@ export class UsersComponent implements OnInit {
         });
     }
     
-    updateUser(){
+     updateUser(){
 
-        const val = this.form.value;
-        let date = new Date().getTime();
-        this.user.login = val.login;
-        this.user.role = val.role;
-        this.user.timeStamp = date;
-        this.userService.updateUser(this.user.$key,this.user);
-        this.user = new User(); 
-    }
+         const val = this.form.value;
+         let date = new Date().getTime();
+         this.usr.login = val.login;
+         this.usr.role = val.role;
+         this.usr.timeStamp = date;
+          this.store.dispatch(new userActions.UpdateUser(this.usr));
+          this.usr = new User(); 
+     }
     
-    deleteUserModel(user,deletecontent) {
+    deleteUserModel(deleteUser,deletecontent) {
 
-        this.user = user;
+        this.usr = deleteUser;
         //Open Model
         this.modalService.open(deletecontent).result.then((result) => {
             this.closeResult = `Closed with: ${result}`;
@@ -155,12 +157,10 @@ export class UsersComponent implements OnInit {
     }
 
     deleteUser(){
-        this.userService.deleteUser(this.user.$key);
+       this.store.dispatch(new userActions.DeleteUser(this.usr));
     }
 
-    deleteUsers() {
-        this.userService.deleteAll();
-    }
+
 
     isNotempty() {
         const val = this.form.value;

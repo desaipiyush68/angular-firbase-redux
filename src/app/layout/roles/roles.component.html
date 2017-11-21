@@ -17,7 +17,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let role of Roles">
+                            <tr *ngFor="let role of Roles | paginate: { itemsPerPage: 2, currentPage: p }">
                                 <td>{{ role.$key }}</td>
                                 <td>{{ role.roleName}}</td>
                                 <td><i class="fa fa-pencil-square-o updateRole" (click)='updateRoleModel(role,content)'></i></td>
@@ -25,6 +25,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    <pagination-controls (pageChange)="p = $event" directionLinks="false" maxSize="9"></pagination-controls>
                 </div>
             </div>
         </div>

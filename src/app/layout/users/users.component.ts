@@ -40,7 +40,8 @@ export class UsersComponent implements OnInit {
     login:any;
     user$: Observable<any>;
     role$:Observable<any>;
-    usr:User;
+    usr:User = new User();
+    p: number = 1;
     constructor(
                 private modalService: NgbModal,
                 private fb: FormBuilder,

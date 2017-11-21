@@ -28,6 +28,7 @@ export class RolesPageComponent implements OnInit {
     crRole:boolean;
     upRole:boolean;
     role$:Observable<any>;
+    p: number = 1;
     constructor(
         private modalService: NgbModal,
         private fb: FormBuilder,

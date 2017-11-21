@@ -15,7 +15,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import {NgxPaginationModule} from 'ngx-pagination'; 
 //@Ngrx
 import { EffectsModule }             from '@ngrx/effects';
 import { StoreModule }               from '@ngrx/store';
@@ -47,6 +47,7 @@ export function HttpLoaderFactory(http: Http) {
         HttpModule,
         AppRoutingModule,
         NgbModule.forRoot(),
+        NgxPaginationModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

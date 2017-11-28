@@ -60,7 +60,10 @@ export function HttpLoaderFactory(http: Http) {
           user: userReducer,
           role: roleReducer
         }),
-        EffectsModule.forRoot([UserEffects,RoleEffects]),
+         StoreDevtoolsModule.instrument({
+            maxAge: 10 
+          }),
+        EffectsModule.forRoot([UserEffects,RoleEffects])
         
     ],
     providers: [AuthService,AuthGuard],

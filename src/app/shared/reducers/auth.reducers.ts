@@ -14,7 +14,7 @@ export function authReducer(state = initialState, action: Action) {
       return { ...state, ...action.payload, loading: true };
     case AuthActions.SIGNUP_SUCCESS:
       return { ...state,...action.payload, loading: false };
-    case AuthActions.LOGIN_REQUESTED:
+    case AuthActions.LOGOUT_REQUESTED:
       return { ...state, loading: true };
     case AuthActions.LOGOUT_SUCCESS:
       return { ...state, loading: false };

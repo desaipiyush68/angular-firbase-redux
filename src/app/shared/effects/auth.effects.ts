@@ -43,7 +43,7 @@ export class AuthEffects {
 
     @Effect()
     logout: Observable<Action> = this.actions
-        .ofType(authActions.LOGIN_REQUESTED)
+        .ofType(authActions.LOGOUT_REQUESTED)
         .map((action: authActions.Logout) => action)
         .switchMap(() => this.authService.logout()
             .map(() => new authActions.LogoutSuccess())

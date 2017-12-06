@@ -1,9 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { routerTransition } from '../router.animations';
-import { AuthService } from '../shared/services/auth.service';
 import { Observable } from 'rxjs/Observable';
 import { Validators, FormGroup, FormBuilder } from "@angular/forms";
+
+//ngrx
+import * as authActions from '../shared/actions/auth.actions';
+
+//store 
+import { Store } from '@ngrx/store';
+import { AppState } from '../shared/store/store';
+
 
 @Component({
     selector: 'app-login',
@@ -11,34 +18,23 @@ import { Validators, FormGroup, FormBuilder } from "@angular/forms";
     styleUrls: ['./login.component.scss'],
     animations: [routerTransition()]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
     form: FormGroup;
-
     constructor(
         public router: Router,
         private fb: FormBuilder,
-        private authService: AuthService) {
+        private store: Store<AppState>) {
+        this.store.select('auth');
         this.form = this.fb.group({
             email: ['', Validators.required],
             password: ['', Validators.required]
         });
-
     }
-
-    ngOnInit() {
-    }
-
 
     login() {
-
         const formValue = this.form.value;
-        this.authService.login(formValue.email, formValue.password)
-            .subscribe(
-            () => this.router.navigate(['/users'])
-            );
+        this.store.dispatch(new authActions.Login(formValue))
     }
-
-
 
 }

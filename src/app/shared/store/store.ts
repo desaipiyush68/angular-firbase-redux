@@ -6,4 +6,5 @@ import { Role } from '../../shared/services/model/roles';
 export interface AppState {
   user: User[];
   role:Role[];
+  auth:any;
 }

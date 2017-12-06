@@ -48,7 +48,8 @@ export class AuthService {
     logout() {
         this.afAuth.auth.signOut();
         this.authInfo$.next(AuthService.UNKNOWN_USER);
-        this.router.navigate(['/login']);
+        const subject = new Subject<any>();
+        return subject.asObservable();
     }
 
 }

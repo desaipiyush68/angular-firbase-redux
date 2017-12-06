@@ -1,8 +1,14 @@
 import { Component } from '@angular/core';
 import { routerTransition } from '../router.animations';
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { AuthService } from "../shared/services/auth.service";
 import { Router } from "@angular/router";
+import { Observable } from 'rxjs/Observable';
+//ngrx
+import * as authActions from '../shared/actions/auth.actions';
+
+//store 
+import { Store }        from '@ngrx/store';
+import { AppState } from '../shared/store/store';
 
 @Component({
     selector: 'app-signup',
@@ -12,18 +18,15 @@ import { Router } from "@angular/router";
 })
 export class SignupComponent {
     form: FormGroup;
-
     constructor(private fb: FormBuilder,
-        private authService: AuthService,
-        private router: Router) {
-
+        private router: Router,
+        private store: Store<AppState>) {
+       this.store.select('auth');
         this.form = this.fb.group({
             email: ['', Validators.required],
             password: ['', Validators.required],
             confirm: ['', Validators.required]
         });
-
-
     }
 
     isPasswordMatch() {
@@ -31,16 +34,10 @@ export class SignupComponent {
         return val && val.password && val.password == val.confirm;
     }
 
-    signUp() {
+    signUp() { 
         const val = this.form.value;
-
-        this.authService.signUp(val.email, val.password)
-            .subscribe(
-            () => {
-                this.router.navigateByUrl('/users');
-            },
-            err => alert(err)
-            );
+        this.store.dispatch(new authActions.Signup(val));
     }
 
 }
+

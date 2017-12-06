@@ -24,13 +24,24 @@ import { StoreDevtoolsModule }       from '@ngrx/store-devtools';
 //reduces and Effects
 import { UserEffects }  from './shared/effects/users.effects';
 import { RoleEffects }  from './shared/effects/roles.effects';
+import { AuthEffects }  from './shared/effects/auth.effects';
 import { userReducer }  from './shared/reducers/users.reducers';
 import { roleReducer }  from './shared/reducers/roles.reducers';
+import { authReducer }  from './shared/reducers/auth.reducers';
 
 
 export function HttpLoaderFactory(http: Http) {
      return new TranslateHttpLoader(http, '/assets/i18n/', '.json');
 }
+
+export const firebaseConfig = {
+    apiKey: "AIzaSyAOxA5AVFhjcr3Mw9y7ImH9P3VutzQOYOA",
+    authDomain: "piyush-eqs.firebaseapp.com",
+    databaseURL: "https://piyush-eqs.firebaseio.com",
+    projectId: "piyush-eqs",
+    storageBucket: "piyush-eqs.appspot.com",
+    messagingSenderId: "533321736928"
+  };
 
 @NgModule({
     declarations: [
@@ -39,7 +50,7 @@ export function HttpLoaderFactory(http: Http) {
     imports: [
         CommonModule,
         BrowserModule,
-        AngularFireModule.initializeApp(environment.firebase),
+        AngularFireModule.initializeApp(firebaseConfig),
         AngularFireDatabaseModule,
         AngularFireAuthModule,
         BrowserAnimationsModule,
@@ -58,12 +69,13 @@ export function HttpLoaderFactory(http: Http) {
         
         StoreModule.forRoot({
           user: userReducer,
-          role: roleReducer
+          role: roleReducer,
+          auth:  authReducer
         }),
          StoreDevtoolsModule.instrument({
             maxAge: 10 
           }),
-        EffectsModule.forRoot([UserEffects,RoleEffects])
+        EffectsModule.forRoot([UserEffects,RoleEffects,AuthEffects])
         
     ],
     providers: [AuthService,AuthGuard],
@@ -71,4 +83,4 @@ export function HttpLoaderFactory(http: Http) {
 })
 export class AppModule {
 }
-//StoreDevtoolsModule.instrument({ maxAge: 25 })
+

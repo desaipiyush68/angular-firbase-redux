@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { AuthService }   from '../../services/auth.service';
+
+//ngrx
+import * as authActions from '../../actions/auth.actions';
+
+//store 
+import { Store } from '@ngrx/store';
+import { AppState } from '../../store/store';
 
 @Component({
     selector: 'app-header',
@@ -12,11 +18,12 @@ import { AuthService }   from '../../services/auth.service';
 export class HeaderComponent implements OnInit {
 
     pushRightClass: string = 'push-right';
-    
+
     constructor(
         private translate: TranslateService,
-        public router: Router,
-        private authservice: AuthService) {
+        public router: Router, 
+        private store: Store<AppState>) {
+        this.store.select('auth'); 
         this.router.events.subscribe((val) => {
             if (val instanceof NavigationEnd && window.innerWidth <= 992 && this.isToggled()) {
                 this.toggleSidebar();
@@ -24,8 +31,8 @@ export class HeaderComponent implements OnInit {
         });
     }
 
-    ngOnInit() {}
-  
+    ngOnInit() { }
+
     isToggled(): boolean {
         const dom: Element = document.querySelector('body');
         return dom.classList.contains(this.pushRightClass);
@@ -36,13 +43,13 @@ export class HeaderComponent implements OnInit {
         dom.classList.toggle(this.pushRightClass);
     }
 
-   // rltAndLtr() {
-   //     const dom: any = document.querySelector('body');
-   //     dom.classList.toggle('rtl');
-   // }
+    // rltAndLtr() {
+    //     const dom: any = document.querySelector('body');
+    //     dom.classList.toggle('rtl');
+    // }
 
     onLoggedout() {
-       this.authservice.logout();
+       this.store.dispatch(new authActions.Logout());
     }
 
     changeLang(language: string) {

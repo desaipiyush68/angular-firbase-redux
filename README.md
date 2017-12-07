@@ -20,4 +20,4 @@ npm start
 ```
 
 Navigate to [http://localhost:4201/](http://localhost:4201/) in your browser <br />
-Demo http://azuredesai.azurewebsites.net
+Demo https://angular-firbase-redux.000webhostapp.com
